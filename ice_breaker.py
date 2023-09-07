@@ -5,6 +5,8 @@ from langchain.chat_models import ChatOpenAI
 from langchain.chains import LLMChain
 from dotenv import load_dotenv, find_dotenv
 
+from third_parties.linkedin import scrape_linkedin_profile
+
 
 _ = load_dotenv(find_dotenv()) # read local .env file
 openai.api_key = os.environ['OPENAI_API_KEY']
@@ -30,4 +32,10 @@ if __name__== '__main__':
 
     chain= LLMChain(llm=llm,prompt=summary_prompt_template)
 
-    print(chain.run(information=information))
+    linkedin_data = scrape_linkedin_profile(linkedin_profile_url="https://www.linkedin.com/in/harsh-walia-32b968172")
+
+    print(chain.run(information=linkedin_data))
+
+    
+
+    
