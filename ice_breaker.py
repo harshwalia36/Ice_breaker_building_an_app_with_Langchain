@@ -7,39 +7,50 @@ from dotenv import load_dotenv, find_dotenv
 
 from third_parties.linkedin import scrape_linkedin_profile
 from agents.linkedin_lookup_agent import lookup as linkedin_lookup_agent
+from output_parser import person_intel_parser
+from output_parser import PersonIntel
 
 
-_ = load_dotenv(find_dotenv()) # read local .env file
-openai.api_key = os.environ['OPENAI_API_KEY']
-serpapi_api_key = os.environ['SERPAPI_API_KEY']
-
-information="""
-Elon Reeve Musk (/ˈiːlɒn/ EE-lon; born June 28, 1971) is a business magnate and investor. Musk is the founder, chairman, CEO and chief technology officer of SpaceX; angel investor, CEO, product architect and former chairman of Tesla, Inc.; owner, chairman and CTO of X Corp.; founder of the Boring Company; co-founder of Neuralink and OpenAI; and president of the Musk Foundation. He is the wealthiest person in the world, with an estimated net worth of US$226 billion as of September 2023, according to the Bloomberg Billionaires Index, and $249 billion according to Forbes, primarily from his ownership stakes in both Tesla and SpaceX.
-"""
+_ = load_dotenv(find_dotenv())  # read local .env file
+openai.api_key = os.environ["OPENAI_API_KEY"]
+serpapi_api_key = os.environ["SERPAPI_API_KEY"]
 
 
-if __name__== '__main__':
-    print("hello langchain")
-    
+def ice_break(name: str) -> PersonIntel:
     summary_template = """
         given the information {information} about a person from I want you to create:
         1. a short summary
         2. two interesting facts about them.
+        3. A topic that may interest them
+        4. 2 creative Ice breakers to open a conversation with them {format_instructions}
 """
 
-
-    summary_prompt_template = PromptTemplate(input_variables=["information"], template=summary_template)
+    summary_prompt_template = PromptTemplate(
+        input_variables=["information"],
+        template=summary_template,
+        partial_variables={
+            "format_instructions": person_intel_parser.get_format_instructions()
+        },
+    )
 
     llm = ChatOpenAI(temperature=0, model_name="gpt-3.5-turbo")
 
-    chain= LLMChain(llm=llm,prompt=summary_prompt_template)
+    chain = LLMChain(llm=llm, prompt=summary_prompt_template)
 
-    linkedin_profile_url=linkedin_lookup_agent(name="Harsh Walia Data Scientist")
+    linkedin_profile_url = linkedin_lookup_agent(name=name)
     print(linkedin_profile_url)
-    linkedin_data = scrape_linkedin_profile(linkedin_profile_url="https://www.linkedin.com/in/harsh-walia-32b968172")
 
-    print(chain.run(information=linkedin_data))
+    linkedin_data = scrape_linkedin_profile(
+        linkedin_profile_url="https://www.linkedin.com/in/harsh-walia-32b968172"
+    )
 
-    
+    result = chain.run(information=linkedin_data)
+    return person_intel_parser.parse(result)
 
-    
+
+if __name__ == "__main__":
+    print("hello langchain")
+
+    result = ice_break(name="Harsh Walia Data Scientist")
+    print(type(result))
+    print(result)
