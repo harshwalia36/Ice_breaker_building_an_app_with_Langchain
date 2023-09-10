@@ -8,10 +8,10 @@
 * Ice_Breaker: Starter conversation
 * Person’s Topic of interest
 
-![1](images\1.png)
+![1](https://github.com/harshwalia36/Ice_breaker_building_an_app_with_Langchain/blob/master/images/1.png)
 
-![2](images\2.png)
+![2](https://github.com/harshwalia36/Ice_breaker_building_an_app_with_Langchain/blob/master/images/2.png)
 
-![3](images\3.png)
+![3](https://github.com/harshwalia36/Ice_breaker_building_an_app_with_Langchain/blob/master/images/3.png)
 
-![4](images\4.png)
+![4](https://github.com/harshwalia36/Ice_breaker_building_an_app_with_Langchain/blob/master/images/4.png)
