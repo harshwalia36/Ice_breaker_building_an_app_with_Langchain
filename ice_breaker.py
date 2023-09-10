@@ -4,6 +4,7 @@ from langchain import PromptTemplate
 from langchain.chat_models import ChatOpenAI
 from langchain.chains import LLMChain
 from dotenv import load_dotenv, find_dotenv
+from typing import Tuple
 
 from third_parties.linkedin import scrape_linkedin_profile
 from agents.linkedin_lookup_agent import lookup as linkedin_lookup_agent
@@ -16,7 +17,7 @@ openai.api_key = os.environ["OPENAI_API_KEY"]
 serpapi_api_key = os.environ["SERPAPI_API_KEY"]
 
 
-def ice_break(name: str) -> PersonIntel:
+def ice_break(name: str) -> Tuple[PersonIntel,str]:
     summary_template = """
         given the information {information} about a person from I want you to create:
         1. a short summary
@@ -41,11 +42,13 @@ def ice_break(name: str) -> PersonIntel:
     print(linkedin_profile_url)
 
     linkedin_data = scrape_linkedin_profile(
-        linkedin_profile_url="https://www.linkedin.com/in/harsh-walia-32b968172"
+        linkedin_profile_url=linkedin_profile_url
     )
 
+    print(linkedin_data)
+
     result = chain.run(information=linkedin_data)
-    return person_intel_parser.parse(result)
+    return person_intel_parser.parse(result),linkedin_data.get("profile_pic_url")
 
 
 if __name__ == "__main__":
