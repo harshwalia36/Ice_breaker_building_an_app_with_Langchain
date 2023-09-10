@@ -7,6 +7,7 @@ class PersonIntel(BaseModel):
     """
     A class for how the output of llm will look like
     """
+
     summary: str = Field(description="Summary of the person")
     facts: List[str] = Field(description="Interesting Facts about the person")
     topic_of_interest: List[str] = Field(
